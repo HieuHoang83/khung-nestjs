@@ -32,7 +32,7 @@ export class UsersService {
   }
 
   findAll() {
-    //return this.userModel.findAll({_id});
+    return this.userModel.find();
   }
 
   async findOne(id: string) {
