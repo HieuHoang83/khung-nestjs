@@ -9,6 +9,7 @@ import {
   Put,
   UseGuards,
   Request,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,38 +18,52 @@ import { UserGuard } from './user.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { AuthService } from 'src/auth/auth.service';
-import { Public } from 'src/decorators/customize';
+import { Public, ResponseMessage, User } from 'src/decorators/customize';
+import { IUser } from './users.interface';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-  @Public()
+
   @Post()
-  create(@Body() createuserdto: CreateUserDto) {
-    return this.usersService.create(createuserdto);
+  @ResponseMessage('create new user')
+  async create(@Body() createuserdto: CreateUserDto, @User() user: IUser) {
+    let newUser: any = await this.usersService.create(createuserdto, user);
+    return {
+      _id: newUser?._id,
+      createAt: newUser?.createdAt,
+    };
   }
 
   @Public()
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @ResponseMessage('get paginate user')
+  @Get('')
+  GetPaginate(
+    @Query('current') currentPage: number,
+    @Query('pageSize') limit: number,
+    @Query() qs: string,
+  ) {
+    return this.usersService.GetPaginate(currentPage, limit, qs);
   }
 
   @Public()
+  @ResponseMessage('get by id')
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
-  @Public()
-  @Put('')
-  update(@Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(updateUserDto);
+  @ResponseMessage('update user')
+  @Patch('')
+  async update(@Body() updateUserDto: UpdateUserDto, @User() user: IUser) {
+    let updateUser: any = await this.usersService.update(updateUserDto, user);
+    return updateUser;
   }
 
-  @Public()
+  @ResponseMessage('delete user')
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  async remove(@Param('id') id: string) {
+    let deleteuser: any = await this.usersService.remove(id);
+    return deleteuser;
   }
 }

@@ -1,17 +1,70 @@
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsObject,
+  IsString,
+  MaxLength,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
+import mongoose from 'mongoose';
+class CompanyDto {
+  @IsNotEmpty({ message: '_id company k duoc de trong' })
+  _id: mongoose.Schema.Types.ObjectId;
 
+  @IsNotEmpty({ message: '_id company k duoc de trong' })
+  name: string;
+}
 export class CreateUserDto {
-  @IsEmail({}, { message: 'email k dung dinh dang' })
-  @IsNotEmpty({ message: 'email k duoc de trong' })
+  @IsNotEmpty({ message: 'Name k duoc de trong' })
+  @MinLength(3, { message: 'Name phai nhieu hon 3 ki tu' })
+  name: string;
+
+  @IsEmail({}, { message: 'Email k dung dinh dang' })
+  @IsNotEmpty({ message: 'Email k duoc de trong' })
   email: string;
 
-  @IsNotEmpty({ message: 'password k duoc de trong' })
+  @IsNotEmpty({ message: 'Password k duoc de trong' })
   password: string;
 
-  @IsNotEmpty({ message: 'name k duoc de trong' })
-  @MinLength(3, { message: 'name phai nhieu hon 3 ki tu' })
+  @IsNotEmpty({ message: 'Age k duoc de trong' })
+  age: number;
+
+  @IsNotEmpty({ message: 'Gender k duoc de trong' })
+  gender: string;
+
+  @IsNotEmpty({ message: 'Address k duoc de trong' })
+  address: string;
+
+  @IsNotEmpty({ message: 'Role k duoc de trong' })
+  role: string;
+  //validate object
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CompanyDto)
+  company: CompanyDto;
+}
+export class RegisterUserDto {
+  @IsEmail({}, { message: 'Email k dung dinh dang' })
+  @IsNotEmpty({ message: 'Email k duoc de trong' })
+  email: string;
+
+  @IsNotEmpty({ message: 'Password k duoc de trong' })
+  password: string;
+
+  @IsNotEmpty({ message: 'Name k duoc de trong' })
+  @MinLength(3, { message: 'Name phai nhieu hon 3 ki tu' })
   name: string;
-  phone?: string;
-  age?: number;
-  address?: string;
+
+  @IsNotEmpty({ message: 'Age k duoc de trong' })
+  age: number;
+
+  @IsNotEmpty({ message: 'Gender k duoc de trong' })
+  gender: string;
+
+  @IsNotEmpty({ message: 'Address k duoc de trong' })
+  address: string;
 }

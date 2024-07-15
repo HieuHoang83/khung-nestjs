@@ -1,7 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-import { SoftDeleteModel } from 'mongoose-delete';
-import MongooseDelete from 'mongoose-delete';
+import mongoose, { HydratedDocument } from 'mongoose';
 export type UserDocument = HydratedDocument<User>;
 
 //timestamp de tao creatat updateat
@@ -9,26 +7,48 @@ export type UserDocument = HydratedDocument<User>;
 @Schema({ timestamps: true })
 export class User {
   @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true })
   email: string;
 
   @Prop({ required: true })
   password: string;
 
   @Prop()
-  name: string;
-
-  @Prop()
-  phone: string;
-
-  @Prop()
   age: number;
+
+  @Prop()
+  gender: string;
 
   @Prop()
   address: string;
 
+  @Prop({ type: Object })
+  company: {
+    _id: mongoose.Schema.Types.ObjectId;
+    name: string;
+  };
+
+  @Prop()
+  role: string;
+
+  @Prop()
+  refreshToken: string;
+
+  @Prop({ type: Object })
+  createBy: {
+    _id: mongoose.Schema.Types.ObjectId;
+    email: string;
+  };
   @Prop()
   createAt: Date;
 
+  @Prop({ type: Object })
+  Updateby: {
+    _id: mongoose.Schema.Types.ObjectId;
+    email: string;
+  };
   @Prop()
   UpdateAt: Date;
 }

@@ -20,16 +20,6 @@ export class AppController {
     private configService: ConfigService,
     private readonly authservice: AuthService,
   ) {}
-  //public de ngan kiem tra token cho ham login
-  @Public()
-  @UseGuards(LocalAuthGuard)
-  @Post('/login')
-  handleLogin(@Request() req) {
-    return this.authservice.login(req.user);
-  }
 
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
+  //public de ngan kiem tra token cho ham login
 }
