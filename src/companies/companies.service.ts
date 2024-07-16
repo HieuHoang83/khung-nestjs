@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -12,6 +12,7 @@ export class CompaniesService {
   constructor(
     @InjectModel(Company.name) private companyModel: Model<Company>,
   ) {}
+
   create(createCompanyDto: CreateCompanyDto, user: IUser) {
     return this.companyModel.create({
       ...createCompanyDto,
@@ -28,7 +29,7 @@ export class CompaniesService {
 
   async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return 'not found';
+      throw new BadRequestException(`id khong ton tai tren he thong`);
     }
     return await this.companyModel.findOne({ _id: id });
   }
@@ -63,7 +64,7 @@ export class CompaniesService {
   }
   async update(id: string, updateCompanyDto: UpdateCompanyDto, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return 'not found';
+      throw new BadRequestException(`id khong ton tai tren he thong`);
     }
     return await this.companyModel.updateOne(
       { _id: id },
@@ -79,7 +80,7 @@ export class CompaniesService {
 
   remove(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return 'not found';
+      throw new BadRequestException(`id khong ton tai tren he thong`);
     }
     return this.companyModel.deleteOne({
       _id: id,

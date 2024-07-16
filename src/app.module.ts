@@ -10,6 +10,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { CompaniesModule } from './companies/companies.module';
 import { JobsModule } from './jobs/jobs.module';
+import { FileModule } from './file/file.module';
 @Module({
   imports: [
     MongooseModule.forRootAsync({
@@ -27,6 +28,7 @@ import { JobsModule } from './jobs/jobs.module';
     AuthModule,
     CompaniesModule,
     JobsModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

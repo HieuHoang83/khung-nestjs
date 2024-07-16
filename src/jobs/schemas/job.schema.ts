@@ -9,9 +9,9 @@ export class Job {
   @Prop({ required: true })
   name: string;
   @Prop({ required: true })
-  skills: string;
+  skills: string[];
 
-  @Prop({ type: Object })
+  @Prop({ type: Object, required: true })
   company: {
     _id: mongoose.Schema.Types.ObjectId;
     name: string;
@@ -33,7 +33,7 @@ export class Job {
   description: string;
 
   @Prop()
-  startdate: Date;
+  startDate: Date;
 
   @Prop()
   endDate: Date;

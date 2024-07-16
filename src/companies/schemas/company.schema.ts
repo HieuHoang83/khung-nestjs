@@ -14,6 +14,9 @@ export class Company {
   @Prop({ required: true })
   description: string;
 
+  @Prop()
+  logo: string;
+
   @Prop({ type: Object })
   createBy: {
     _id: string;

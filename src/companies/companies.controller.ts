@@ -22,16 +22,10 @@ export class CompaniesController {
 
   @Post()
   create(@Body() createCompanyDto: CreateCompanyDto, @User() user: IUser) {
-    console.log(user);
     return this.companiesService.create(createCompanyDto, user);
   }
 
   @Get()
-  findAll() {
-    return this.companiesService.findAll();
-  }
-
-  @Get('/paginate')
   GetPaginate(
     @Query('current') currentPage: number,
     @Query('pageSize') limit: number,
