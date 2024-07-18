@@ -11,7 +11,7 @@ import {
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
-import { User } from 'src/decorators/customize';
+import { ResponseMessage, User } from 'src/decorators/customize';
 import { IUser } from 'src/users/users.interface';
 
 @Controller('jobs')
@@ -19,11 +19,13 @@ export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
   @Post()
+  @ResponseMessage('create Job ')
   create(@Body() createJobDto: CreateJobDto, @User() user: IUser) {
     return this.jobsService.create(createJobDto, user);
   }
 
   @Get()
+  @ResponseMessage('Get Paginate Job ')
   GetPaginate(
     @Query('current') currentPage: number,
     @Query('pageSize') limit: number,
@@ -33,11 +35,13 @@ export class JobsController {
   }
 
   @Get(':id')
+  @ResponseMessage('Get Job by id ')
   findOne(@Param('id') id: string) {
     return this.jobsService.findOne(id);
   }
 
   @Patch(':id')
+  @ResponseMessage('update Job by id ')
   update(
     @Param('id') id: string,
     @Body() updateJobDto: UpdateJobDto,
@@ -47,6 +51,7 @@ export class JobsController {
   }
 
   @Delete(':id')
+  @ResponseMessage('delete Job by id ')
   remove(@Param('id') id: string) {
     return this.jobsService.remove(id);
   }

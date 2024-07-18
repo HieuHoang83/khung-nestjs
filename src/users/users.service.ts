@@ -93,12 +93,37 @@ export class UsersService {
       .findOne({
         _id: id,
       })
-      .select('-password');
+      .select('-password')
+      .populate({
+        //path => truong join vs bang khac
+        path: 'role',
+        //1 => hien tri col do
+        select: {
+          _id: 1,
+          name: 1,
+          discription: 1,
+          isActive: 1,
+          permissions: 1,
+        },
+      });
   }
   async findOneByemail(email: string) {
-    return await this.userModel.findOne({
-      email: email,
-    });
+    return await this.userModel
+      .findOne({
+        email: email,
+      })
+      .populate({
+        //path => truong join vs bang khac
+        path: 'role',
+        //1 => hien tri col do
+        select: {
+          _id: 1,
+          name: 1,
+          discription: 1,
+          isActive: 1,
+          permissions: 1,
+        },
+      });
   }
   findUserRft = async (refreshToken: string) => {
     return await this.userModel
@@ -144,10 +169,17 @@ export class UsersService {
   };
   async remove(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return 'not found';
+      throw new BadRequestException(`id khong ton tai tren he thong`);
     }
-    return await this.userModel.deleteOne({
+    let user = await this.userModel.findOne({
       _id: id,
     });
+    if (user.email === 'admin@gmail.com') {
+      throw new BadRequestException(`Khong the xoa user ADMIN`);
+    } else {
+      return await this.userModel.deleteOne({
+        _id: id,
+      });
+    }
   }
 }

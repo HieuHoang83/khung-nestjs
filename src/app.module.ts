@@ -11,6 +11,10 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { CompaniesModule } from './companies/companies.module';
 import { JobsModule } from './jobs/jobs.module';
 import { FileModule } from './file/file.module';
+import { ResumesModule } from './resumes/resumes.module';
+import { RolesModule } from './roles/roles.module';
+import { PermissionsModule } from './permissions/permissions.module';
+import { DatabaseModule } from './database/database.module';
 @Module({
   imports: [
     MongooseModule.forRootAsync({
@@ -29,6 +33,10 @@ import { FileModule } from './file/file.module';
     CompaniesModule,
     JobsModule,
     FileModule,
+    ResumesModule,
+    RolesModule,
+    PermissionsModule,
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,6 +3,7 @@ import {
   IsArray,
   IsDate,
   IsEmail,
+  IsMongoId,
   IsNotEmpty,
   IsNotEmptyObject,
   IsObject,
@@ -13,11 +14,15 @@ import {
 } from 'class-validator';
 import mongoose from 'mongoose';
 class CompanyDto {
+  @IsMongoId({ message: '_id is mongoose ID' })
   @IsNotEmpty({ message: '_id company k duoc de trong' })
   _id: mongoose.Schema.Types.ObjectId;
 
   @IsNotEmpty({ message: '_id company k duoc de trong' })
   name: string;
+
+  @IsNotEmpty({ message: 'logo company k duoc de trong' })
+  logo: string;
 }
 export class CreateJobDto {
   @IsNotEmpty({ message: 'Name k duoc de trong' })

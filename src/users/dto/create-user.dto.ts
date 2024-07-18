@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   IsEmail,
+  IsMongoId,
   IsNotEmpty,
   IsNotEmptyObject,
   IsObject,
@@ -11,6 +12,7 @@ import {
 } from 'class-validator';
 import mongoose from 'mongoose';
 class CompanyDto {
+  @IsMongoId({ message: '_id is mongoose ID' })
   @IsNotEmpty({ message: '_id company k duoc de trong' })
   _id: mongoose.Schema.Types.ObjectId;
 
@@ -39,6 +41,7 @@ export class CreateUserDto {
   address: string;
 
   @IsNotEmpty({ message: 'Role k duoc de trong' })
+  @IsMongoId({ message: 'role dang mongoose Id' })
   role: string;
   //validate object
   @IsNotEmptyObject()
