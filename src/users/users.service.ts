@@ -8,9 +8,14 @@ import bcrypt from 'bcryptjs';
 import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
 import { IUser } from './users.interface';
 import aqp from 'api-query-params';
+import { RolesService } from 'src/roles/roles.service';
+import { USER_Role } from 'src/database/sample';
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private rolesService: RolesService,
+  ) {}
 
   hashpassword = (password: string) => {
     const salt = genSaltSync(10);
@@ -49,10 +54,10 @@ export class UsersService {
     }
 
     registerUserdto.password = this.hashpassword(registerUserdto.password);
-
+    let userrole: any = this.rolesService.findbyNameRole(USER_Role);
     let user = await this.userModel.create({
       ...registerUserdto,
-      role: 'User',
+      role: userrole?._id,
     });
     return user;
   }

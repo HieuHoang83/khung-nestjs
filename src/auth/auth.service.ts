@@ -10,10 +10,12 @@ import { genSaltSync, hashSync } from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
 import ms from 'ms';
 import { Request, Response } from 'express';
+import { RolesService } from 'src/roles/roles.service';
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
+    private rolesService: RolesService,
     private jwtService: JwtService,
     private configserver: ConfigService,
   ) {}
@@ -28,9 +30,16 @@ export class AuthService {
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user: User = await this.usersService.findOneByemail(username);
-
     if (user && this.usersService.CheckUserpassword(pass, user.password)) {
-      return user;
+      const userRole: any = user.role;
+      const temp = await this.rolesService.findOne(userRole?._id.toString());
+
+      return {
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        permissions: temp?.permissions ?? [],
+      };
     }
     return null;
   }
@@ -43,6 +52,7 @@ export class AuthService {
       name: user.name,
       email: user.email,
       role: user.role,
+      permissions: user.permissions,
     };
     //create refresh token
     const refreshToken = await this.createRefreshToken(payload);
@@ -62,6 +72,7 @@ export class AuthService {
         name: user.name,
         email: user.email,
         role: user.role,
+        permissions: user.permissions,
       },
     };
   }

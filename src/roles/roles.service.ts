@@ -41,7 +41,19 @@ export class RolesService {
       select: { _id: 1, apiPath: 1, name: 1, method: 1, module: 1 },
     });
   }
-
+  async findbyNameRole(name: string) {
+    let role = await this.RoleModel.findOne({ name: name }).populate({
+      //path => truong join vs bang khac
+      path: 'permissions',
+      //1 => hien tri col do
+      select: { _id: 1, apiPath: 1, name: 1, method: 1, module: 1 },
+    });
+    if (!role) {
+      throw new BadRequestException(`role Name khong ton tai tren he thong`);
+    } else {
+      return role;
+    }
+  }
   async update(id: string, updateRoleDto: UpdateRoleDto, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new BadRequestException(`id khong ton tai tren he thong`);

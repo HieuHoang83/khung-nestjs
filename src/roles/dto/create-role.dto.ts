@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsBoolean,
   IsEmail,
   IsMongoId,
   IsNotEmpty,
@@ -13,11 +14,9 @@ export class CreateRoleDto {
   @IsNotEmpty({ message: 'Description k duoc de trong' })
   description: string;
 
-  @IsNotEmpty({ message: 'Method k duoc de trong' })
-  isActive: string;
-
-  @IsNotEmpty({ message: 'Module k duoc de trong' })
-  module: string;
+  @IsNotEmpty({ message: 'isActive k duoc de trong' })
+  @IsBoolean({ message: 'isActive dang boolean' })
+  isActive: Boolean;
 
   @IsNotEmpty({ message: 'Permissions k duoc de trong' })
   @IsMongoId({ message: 'permissions is mongoose id' })

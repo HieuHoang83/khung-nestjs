@@ -46,7 +46,6 @@ export class UsersController {
     return this.usersService.GetPaginate(currentPage, limit, qs);
   }
 
-  @Public()
   @ResponseMessage('get by id')
   @Get(':id')
   findOne(@Param('id') id: string) {
