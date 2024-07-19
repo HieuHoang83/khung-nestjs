@@ -16,17 +16,18 @@ import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authservice: AuthService) {}
 
-  //public de ngan kiem tra token cho ham login
-  @Public()
-  @ResponseMessage('user login ')
-  @UseGuards(LocalAuthGuard)
+  @Public() //public de ngan kiem tra token cho ham login
+  @ResponseMessage('user login ') //loi nhan khi call api success
+  @UseGuards(ThrottlerGuard) //ThrottlerGuard: ap dung limit call api /1 may trong 1 khoang tg
+  @Throttle({ default: { limit: 3, ttl: 60000 } }) //ghi de limit mac dinh
+  @UseGuards(LocalAuthGuard) //LocalAuthGuard: check xem nguoi dung da dang nhap hay chua. Nếu rồi trả về user cho biến request (request.user)
   @Post('/login')
-  //@User de lay du lieu tu jwt truyen len
   handleLogin(@Req() request, @Res({ passthrough: true }) response: Response) {
     return this.authservice.login(request.user, response);
   }
@@ -61,6 +62,7 @@ export class AuthController {
 
   @ResponseMessage('logout account')
   @Post('/logout')
+  //@User de lay du lieu tu jwt truyen len
   Logout(@User() user: IUser, @Res({ passthrough: true }) response: Response) {
     return this.authservice.logout(user, response);
   }

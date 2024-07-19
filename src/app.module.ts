@@ -15,6 +15,8 @@ import { ResumesModule } from './resumes/resumes.module';
 import { RolesModule } from './roles/roles.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { DatabaseModule } from './database/database.module';
+import { MailModule } from './mail/mail.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 @Module({
   imports: [
     MongooseModule.forRootAsync({
@@ -28,6 +30,13 @@ import { DatabaseModule } from './database/database.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    //gioi han luot goi api/ 1 may sd
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, //mili giay
+        limit: 10, //gioi han trong n giay do
+      },
+    ]),
     UsersModule,
     AuthModule,
     CompaniesModule,
@@ -37,6 +46,7 @@ import { DatabaseModule } from './database/database.module';
     RolesModule,
     PermissionsModule,
     DatabaseModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
