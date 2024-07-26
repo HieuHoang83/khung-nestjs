@@ -3,7 +3,12 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/schemas/user.schema';
 import { UsersService } from 'src/users/users.service';
 import { IUser } from 'src/users/users.interface';
-import { CreateUserDto, RegisterUserDto } from 'src/users/dto/create-user.dto';
+import {
+  CreateUserDto,
+  LOGINDTO,
+  RegisterUserSocialDto,
+  RegisterUserSystemDto,
+} from 'src/users/dto/create-user.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { genSaltSync, hashSync } from 'bcryptjs';
@@ -30,10 +35,16 @@ export class AuthService {
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user: User = await this.usersService.findOneByemail(username);
+
+    if (user && user.type !== 'SYSTEM') {
+      throw new BadRequestException('Tài khoản đang đăng nhập trái phép');
+    }
     if (user && this.usersService.CheckUserpassword(pass, user.password)) {
       const userRole: any = user.role;
-      const temp = await this.rolesService.findOne(userRole?._id.toString());
-
+      let temp: any = [];
+      if (userRole?._id) {
+        temp = await this.rolesService.findOne(userRole?._id.toString());
+      }
       return {
         name: user.name,
         email: user.email,
@@ -76,9 +87,62 @@ export class AuthService {
       },
     };
   }
+  async loginsocial(loginDto: LOGINDTO, response: Response) {
+    let user: any = await this.usersService.findOneByemail(loginDto.email);
+    let temp: any = [];
 
-  async RegisterUser(registerUserdto: RegisterUserDto) {
-    let newUser: any = await this.usersService.register(registerUserdto);
+    if (user) {
+      if (user.role?._id) {
+        temp = await this.rolesService.findOne(user?.role?._id.toString());
+      }
+    } else {
+      user = await this.usersService.registerSocial(loginDto);
+      temp = await this.rolesService.findbyNameRole('USER');
+    }
+    const payload = {
+      sub: 'token login',
+      iss: 'from server',
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      permissions: temp,
+    };
+    //create refresh token
+    const refreshToken = await this.createRefreshToken(payload);
+    //update refresh token in db
+    await this.usersService.updateUserToken(user._id, refreshToken);
+    response.cookie('refreshtoken', refreshToken, {
+      httpOnly: true,
+      maxAge: ms(this.configserver.get<string>('JWT_REFRESH_EXPIRE')),
+      secure: true, // set to true if your using HTTPS
+    });
+    return {
+      access_token: this.jwtService.sign(payload),
+      refreshToken: refreshToken,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        permissions: user.permissions,
+      },
+    };
+  }
+  async RegisterSystemUser(RegisterUserSystemDto: RegisterUserSystemDto) {
+    let newUser: any = await this.usersService.registerSystem(
+      RegisterUserSystemDto,
+    );
+
+    return {
+      _id: newUser?._id,
+      createAt: newUser?.createdAt,
+    };
+  }
+  async RegisterSocialUser(registerUserSocialDto: RegisterUserSocialDto) {
+    let newUser: any = await this.usersService.registerSocial(
+      registerUserSocialDto,
+    );
 
     return {
       _id: newUser?._id,

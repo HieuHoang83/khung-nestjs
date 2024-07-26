@@ -1,5 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateUserDto, RegisterUserDto } from './dto/create-user.dto';
+import {
+  CreateUserDto,
+  RegisterUserSocialDto,
+  RegisterUserSystemDto,
+} from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
@@ -44,19 +48,38 @@ export class UsersService {
     });
     return newuser;
   }
-  async register(registerUserdto: RegisterUserDto) {
-    let isExist = await this.findOneByemail(registerUserdto.email);
+  async registerSystem(registerUserSystemDto: RegisterUserSystemDto) {
+    let isExist = await this.findOneByemail(registerUserSystemDto.email);
 
     if (isExist) {
       throw new BadRequestException(
-        `email ${registerUserdto.email}: da ton tai tren he thong`,
+        `email ${registerUserSystemDto.email}: da ton tai tren he thong`,
       );
     }
 
-    registerUserdto.password = this.hashpassword(registerUserdto.password);
+    registerUserSystemDto.password = this.hashpassword(
+      registerUserSystemDto.password,
+    );
     let userrole: any = this.rolesService.findbyNameRole(USER_Role);
     let user = await this.userModel.create({
-      ...registerUserdto,
+      ...registerUserSystemDto,
+      role: userrole?._id,
+      type: 'SYSTEM',
+    });
+    return user;
+  }
+  async registerSocial(registerSocialUser: RegisterUserSocialDto) {
+    let isExist = await this.findOneByemail(registerSocialUser.email);
+
+    if (isExist) {
+      throw new BadRequestException(
+        `email ${registerSocialUser.email}: da ton tai tren he thong`,
+      );
+    }
+
+    let userrole: any = this.rolesService.findbyNameRole(USER_Role);
+    let user = await this.userModel.create({
+      ...registerSocialUser,
       role: userrole?._id,
     });
     return user;

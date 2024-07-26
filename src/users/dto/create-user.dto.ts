@@ -28,8 +28,11 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'Email k duoc de trong' })
   email: string;
 
-  @IsNotEmpty({ message: 'Password k duoc de trong' })
+  @IsNotEmpty()
   password: string;
+
+  @IsNotEmpty({ message: 'type nguoi dung k duoc de trong' })
+  type: string;
 
   @IsNotEmpty({ message: 'Age k duoc de trong' })
   age: number;
@@ -50,7 +53,7 @@ export class CreateUserDto {
   @Type(() => CompanyDto)
   company: CompanyDto;
 }
-export class RegisterUserDto {
+export class RegisterUserSystemDto {
   @IsEmail({}, { message: 'Email k dung dinh dang' })
   @IsNotEmpty({ message: 'Email k duoc de trong' })
   email: string;
@@ -70,4 +73,28 @@ export class RegisterUserDto {
 
   @IsNotEmpty({ message: 'Address k duoc de trong' })
   address: string;
+}
+export class RegisterUserSocialDto {
+  @IsEmail({}, { message: 'Email k dung dinh dang' })
+  @IsNotEmpty({ message: 'Email k duoc de trong' })
+  email: string;
+
+  @IsNotEmpty({ message: 'Name k duoc de trong' })
+  @MinLength(3, { message: 'Name phai nhieu hon 3 ki tu' })
+  name: string;
+
+  @IsNotEmpty({ message: 'type k duoc de trong' })
+  type: string;
+}
+export class LOGINDTO {
+  @IsEmail({}, { message: 'Email k dung dinh dang' })
+  @IsNotEmpty({ message: 'Email k duoc de trong' })
+  email: string;
+
+  @IsNotEmpty({ message: 'Name k duoc de trong' })
+  @MinLength(3, { message: 'Name phai nhieu hon 3 ki tu' })
+  name: string;
+
+  @IsNotEmpty({ message: 'type k duoc de trong' })
+  type: string;
 }

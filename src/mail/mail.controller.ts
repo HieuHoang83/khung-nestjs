@@ -17,7 +17,7 @@ export class MailController {
       to: 'hieu.hoangminh832004@hcmut.edu.vn',
       from: '"Support Team" <hoangminhhieu2712192@gmail.com>',
       subject: 'Test Email',
-      html: '<b>Welcome!</b>',
+      template: 'test',
     });
   }
 }

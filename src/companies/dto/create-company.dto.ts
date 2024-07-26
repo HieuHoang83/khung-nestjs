@@ -9,6 +9,5 @@ export class CreateCompanyDto {
   @IsNotEmpty({ message: 'description k duoc de trong' })
   description: string;
 
-  @IsNotEmpty({ message: 'Logo k duoc de trong' })
   logo: string;
 }

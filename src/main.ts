@@ -9,6 +9,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import cookieParser from 'cookie-parser';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
@@ -27,7 +28,11 @@ async function bootstrap() {
   //config interceptor
   app.useGlobalInterceptors(new TransformInterceptor(reflector));
   //config validate
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // chi validate nhung key thuộc dto những key k có sẽ bị bỏ qua nếu truyền dư
+    }),
+  );
 
   //config cors
   app.enableCors({
@@ -43,7 +48,14 @@ async function bootstrap() {
     type: VersioningType.URI,
     defaultVersion: ['1', '2'],
   });
-
+  //config swagger
+  const config = new DocumentBuilder()
+    .setTitle('Nestjs API Documentation')
+    .setDescription('ALL module API')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
   await app.listen(port);
 }
 bootstrap();

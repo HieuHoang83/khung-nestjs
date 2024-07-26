@@ -65,6 +65,7 @@ export class DatabaseService implements OnModuleInit {
             gender: 'Nam',
             address: 'Viet Nam',
             role: adminRole?._id,
+            type: 'SYSTEM',
           },
           {
             name: 'I am Hoang Hieu',
@@ -75,6 +76,7 @@ export class DatabaseService implements OnModuleInit {
             gender: 'Nam',
             address: 'HCM',
             role: userRole?._id,
+            type: 'SYSTEM',
           },
           {
             name: 'I am user',
@@ -85,6 +87,7 @@ export class DatabaseService implements OnModuleInit {
             gender: 'Nam',
             address: 'Ha noi',
             role: userRole?._id,
+            type: 'SYSTEM',
           },
         ]);
       }

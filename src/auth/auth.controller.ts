@@ -12,7 +12,11 @@ import { Public, ResponseMessage, User } from 'src/decorators/customize';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { IUser } from 'src/users/users.interface';
-import { RegisterUserDto } from 'src/users/dto/create-user.dto';
+import {
+  LOGINDTO,
+  RegisterUserSocialDto,
+  RegisterUserSystemDto,
+} from 'src/users/dto/create-user.dto';
 import { Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -27,18 +31,36 @@ export class AuthController {
   @UseGuards(ThrottlerGuard) //ThrottlerGuard: ap dung limit call api /1 may trong 1 khoang tg
   @Throttle({ default: { limit: 3, ttl: 60000 } }) //ghi de limit mac dinh
   @UseGuards(LocalAuthGuard) //LocalAuthGuard: check xem nguoi dung da dang nhap hay chua. Nếu rồi trả về user cho biến request (request.user)
-  @Post('/login')
+  @Post('/loginByEmail')
   handleLogin(@Req() request, @Res({ passthrough: true }) response: Response) {
     return this.authservice.login(request.user, response);
   }
 
-  @Public()
-  @ResponseMessage('register a  new user')
-  @Post('/register')
-  RegisterUser(@Body() registerUserdto: RegisterUserDto) {
-    return this.authservice.RegisterUser(registerUserdto);
+  @Public() //public de ngan kiem tra token cho ham login
+  @ResponseMessage('user login ') //loi nhan khi call api success
+  @UseGuards(ThrottlerGuard) //ThrottlerGuard: ap dung limit call api /1 may trong 1 khoang tg
+  @Throttle({ default: { limit: 3, ttl: 60000 } }) //ghi de limit mac dinh
+  @Post('/loginbySocial')
+  handleLoginBySocial(
+    @Body() loginDto: LOGINDTO,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.authservice.loginsocial(loginDto, response);
   }
 
+  @Public()
+  @ResponseMessage('register a  new user')
+  @Post('/registerSystem')
+  RegisterSystemUser(@Body() RegisterUserSystemDto: RegisterUserSystemDto) {
+    return this.authservice.RegisterSystemUser(RegisterUserSystemDto);
+  }
+
+  @Public()
+  @Post('/registerSocial')
+  @ResponseMessage('register a  new user')
+  RegisterSocialUser(@Body() registerUserSocialDto: RegisterUserSocialDto) {
+    return this.authservice.RegisterSocialUser(registerUserSocialDto);
+  }
   //k sd public vi k lay duoc user tu jwt truyen vao
   @ResponseMessage('get account')
   @Get('/account')
