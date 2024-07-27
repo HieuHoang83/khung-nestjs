@@ -115,7 +115,7 @@ export class UsersService {
 
   async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id khong ton tai tren he thong`);
+      throw new BadRequestException(`id is not Exist`);
     }
     return await this.userModel
       .findOne({
@@ -164,7 +164,7 @@ export class UsersService {
 
   async update(updateUserDto: UpdateUserDto, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(updateUserDto._id)) {
-      throw new BadRequestException(`id khong ton tai tren he thong`);
+      throw new BadRequestException(`id is not Exist`);
     }
     if (
       await this.userModel.findOne({
@@ -197,7 +197,7 @@ export class UsersService {
   };
   async remove(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id khong ton tai tren he thong`);
+      throw new BadRequestException(`id is not Exist`);
     }
     let user = await this.userModel.findOne({
       _id: id,

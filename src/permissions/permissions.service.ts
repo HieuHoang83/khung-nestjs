@@ -60,7 +60,7 @@ export class PermissionsService {
 
   findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id khong ton tai tren he thong`);
+      throw new BadRequestException(`id is not Exist`);
     }
     return this.PermissionModel.findOne({
       _id: id,
@@ -73,7 +73,7 @@ export class PermissionsService {
     user: IUser,
   ) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id khong ton tai tren he thong`);
+      throw new BadRequestException(`id is not Exist`);
     }
     let { name, apiPath, method, module } = updatePermissionDto;
     let permission = await this.PermissionModel.findOne({
@@ -107,7 +107,7 @@ export class PermissionsService {
 
   async remove(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id khong ton tai tren he thong`);
+      throw new BadRequestException(`id is not Exist`);
     }
     return await this.PermissionModel.deleteOne({
       _id: id,

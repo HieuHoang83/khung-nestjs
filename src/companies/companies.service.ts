@@ -29,7 +29,7 @@ export class CompaniesService {
 
   async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id khong ton tai tren he thong`);
+      throw new BadRequestException(`id is not Exist`);
     }
     return await this.companyModel.findOne({ _id: id });
   }
@@ -64,7 +64,7 @@ export class CompaniesService {
   }
   async update(id: string, updateCompanyDto: UpdateCompanyDto, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id khong ton tai tren he thong`);
+      throw new BadRequestException(`id is not Exist`);
     }
     return await this.companyModel.updateOne(
       { _id: id },
@@ -80,7 +80,7 @@ export class CompaniesService {
 
   remove(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id khong ton tai tren he thong`);
+      throw new BadRequestException(`id is not Exist`);
     }
     return this.companyModel.deleteOne({
       _id: id,

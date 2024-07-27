@@ -55,7 +55,7 @@ export class JobsService {
 
   async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id khong ton tai tren he thong`);
+      throw new BadRequestException(`id is not Exist`);
     }
     let user = await this.jobModel.findOne({ _id: id });
     return { user: user };
@@ -63,7 +63,7 @@ export class JobsService {
 
   async update(id: string, updateJobDto: UpdateJobDto, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id khong ton tai tren he thong`);
+      throw new BadRequestException(`id is not Exist`);
     }
     return await this.jobModel.updateOne(
       { _id: id },
@@ -79,7 +79,7 @@ export class JobsService {
 
   remove(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id khong ton tai tren he thong`);
+      throw new BadRequestException(`id is not Exist`);
     }
     return this.jobModel.deleteOne({
       _id: id,
