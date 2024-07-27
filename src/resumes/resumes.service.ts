@@ -65,7 +65,7 @@ export class ResumesService {
 
   async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id is not Exist
+      throw new BadRequestException(`id is not Exist`);
     }
     let user = await this.resumeModel.findOne({ _id: id });
     return { user: user };
@@ -92,7 +92,7 @@ export class ResumesService {
   }
   async update(id: string, updateResumeDto: UpdateResumeDto, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id is not Exist
+      throw new BadRequestException(`id is not Exist`);
     }
 
     return await this.resumeModel.updateOne(
@@ -120,7 +120,7 @@ export class ResumesService {
 
   remove(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id is not Exist
+      throw new BadRequestException(`id is not Exist`);
     }
     return this.resumeModel.deleteOne({
       _id: id,
