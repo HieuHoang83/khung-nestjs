@@ -32,7 +32,7 @@ export class RolesService {
 
   async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id is not Exist`);
+      throw new BadRequestException(`id is not Exist
     }
     return await this.RoleModel.findById(id).populate({
       //path => truong join vs bang khac
@@ -56,7 +56,7 @@ export class RolesService {
   }
   async update(id: string, updateRoleDto: UpdateRoleDto, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id is not Exist`);
+      throw new BadRequestException(`id is not Exist
     }
     let { name, description, isActive, permissions } = updateRoleDto;
     let Role = await this.RoleModel.findOne({
@@ -86,7 +86,7 @@ export class RolesService {
   }
   async remove(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`id is not Exist`);
+      throw new BadRequestException(`id is not Exist
     }
     return await this.RoleModel.deleteOne({
       _id: id,
