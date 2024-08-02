@@ -14,6 +14,7 @@ import { LocalAuthGuard } from './local-auth.guard';
 import { IUser } from 'src/users/users.interface';
 import {
   LOGINDTO,
+  RefreshTokenDTO,
   RegisterUserSocialDto,
   RegisterUserSystemDto,
 } from 'src/users/dto/create-user.dto';
@@ -27,10 +28,10 @@ export class AuthController {
   constructor(private readonly authservice: AuthService) {}
 
   @Public() //public de ngan kiem tra token cho ham login
-  @ResponseMessage('user login ') //loi nhan khi call api success
   @UseGuards(ThrottlerGuard) //ThrottlerGuard: ap dung limit call api /1 may trong 1 khoang tg
   @Throttle({ default: { limit: 3, ttl: 60000 } }) //ghi de limit mac dinh
-  @UseGuards(LocalAuthGuard) //LocalAuthGuard: check xem nguoi dung da dang nhap hay chua. Nếu rồi trả về user cho biến request (request.user)
+  @ResponseMessage('user login ') //loi nhan khi call api success
+  @UseGuards(LocalAuthGuard) // Xác thực tk ,mk đăng nhập có thành công hay k để trả về user trong request.user
   @Post('/loginByEmail')
   handleLogin(@Req() request, @Res({ passthrough: true }) response: Response) {
     return this.authservice.login(request.user, response);
@@ -71,15 +72,14 @@ export class AuthController {
   }
 
   @Public()
-  @ResponseMessage('get user by refreshToken')
-  @Get('/refresh')
+  @ResponseMessage('reset access token')
+  @Post('/refresh')
   GetByRefreshToken(
-    @Req() request: Request,
+    @Body() refreshTokenDTO: RefreshTokenDTO,
     @Res({ passthrough: true }) response: Response,
   ) {
-    let refreshToken = request.cookies['refreshtoken'];
-
-    return this.authservice.processNewToken(refreshToken, response);
+    //let refreshToken = request.cookies['refreshtoken'];
+    return this.authservice.processNewToken(refreshTokenDTO, response);
   }
 
   @ResponseMessage('logout account')

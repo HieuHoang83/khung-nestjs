@@ -6,6 +6,7 @@ import { IUser } from 'src/users/users.interface';
 import {
   CreateUserDto,
   LOGINDTO,
+  RefreshTokenDTO,
   RegisterUserSocialDto,
   RegisterUserSystemDto,
 } from 'src/users/dto/create-user.dto';
@@ -35,7 +36,6 @@ export class AuthService {
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user: User = await this.usersService.findOneByemail(username);
-
     if (user && user.type !== 'SYSTEM') {
       throw new BadRequestException('Tài khoản đang đăng nhập trái phép');
     }
@@ -46,6 +46,8 @@ export class AuthService {
         temp = await this.rolesService.findOne(userRole?._id.toString());
       }
       return {
+        //@ts-ignore
+        _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
@@ -70,7 +72,7 @@ export class AuthService {
     //update refresh token in db
     await this.usersService.updateUserToken(user._id, refreshToken);
 
-    response.cookie('refreshtoken', refreshToken, {
+    await response.cookie('refreshtoken', refreshToken, {
       httpOnly: true,
       maxAge: ms(this.configserver.get<string>('JWT_REFRESH_EXPIRE')),
       secure: true, // set to true if your using HTTPS
@@ -117,6 +119,7 @@ export class AuthService {
       maxAge: ms(this.configserver.get<string>('JWT_REFRESH_EXPIRE')),
       secure: true, // set to true if your using HTTPS
     });
+
     return {
       access_token: this.jwtService.sign(payload),
       refreshToken: refreshToken,
@@ -149,13 +152,17 @@ export class AuthService {
       createAt: newUser?.createdAt,
     };
   }
-  async processNewToken(refreshToken: string, response: Response) {
+  async processNewToken(refreshTokenDTO: RefreshTokenDTO, response: Response) {
     try {
       //check refresh token hop le k neu k chuyen qua catch
-      this.jwtService.verify(refreshToken, {
+      this.jwtService.verify(refreshTokenDTO.refreshToken, {
         secret: this.configserver.get<string>('JWT_REFRESH_TOKEN_SECRET'),
       });
-      let user = await this.usersService.findUserRft(refreshToken);
+
+      let user = await this.usersService.findUserRft(
+        refreshTokenDTO.refreshToken,
+      );
+
       if (user) {
         const payload = {
           sub: 'token login',
@@ -166,22 +173,23 @@ export class AuthService {
           role: user.role,
         };
         //create refresh token
-        const refreshToken = await this.createRefreshToken(payload);
+        //const refreshToken = await this.createRefreshToken(payload);
         //update refresh token in db
 
-        response.clearCookie('refreshtoken');
-        await this.usersService.updateUserToken(
-          user._id.toString(),
-          refreshToken,
-        );
-        response.cookie('refreshtoken', refreshToken, {
-          httpOnly: true,
-          maxAge: ms(this.configserver.get<string>('JWT_REFRESH_EXPIRE')),
-          secure: true, // set to true if your using HTTPS
-        });
+        //response.clearCookie('refreshtoken');
+        //upload refresh token by database
+        // await this.usersService.updateUserToken(
+        //   user._id.toString(),
+        //   refreshToken,
+        // );
+        // response.cookie('refreshtoken', refreshToken, {
+        //   httpOnly: true,
+        //   maxAge: ms(this.configserver.get<string>('JWT_REFRESH_EXPIRE')),
+        //   secure: true, // set to true if your using HTTPS
+        // });
         return {
           access_token: this.jwtService.sign(payload),
-          refreshToken: refreshToken,
+          refreshToken: refreshTokenDTO.refreshToken,
           user: {
             _id: user._id,
             name: user.name,

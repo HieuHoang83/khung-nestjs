@@ -8,6 +8,7 @@ import { IUser } from 'src/users/users.interface';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private configService: ConfigService) {
     super({
+      //lay token tu request
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: configService.get<string>('JWT_ACCESS_EXPIRE_SECRET'),

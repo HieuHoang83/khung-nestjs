@@ -98,3 +98,9 @@ export class LOGINDTO {
   @IsNotEmpty({ message: 'type k duoc de trong' })
   type: string;
 }
+export class RefreshTokenDTO {
+  @IsNotEmpty({ message: 'refreshToken k duoc de trong' })
+  refreshToken: string;
+  @IsNotEmpty({ message: 'accessToken k duoc de trong' })
+  accessToken: string;
+}

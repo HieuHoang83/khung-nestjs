@@ -56,13 +56,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
           permission.method === targerMethod
         );
       });
-
+      return user;
       // if (!isExist) {
       //   throw new ForbiddenException(
       //     'Bạn không có quyền truy cập đến method này',
       //   );
       // }
-      return user;
     }
   }
 }
